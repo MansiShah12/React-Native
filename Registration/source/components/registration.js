@@ -1,19 +1,22 @@
 import React,{Component} from 'react';
-import {StyleSheet,Text,View,PixelRatio,TouchableOpacity,Image,TextInput,Linking} from 'react-native';
+import {StyleSheet,Text,View,ScrollView,TouchableOpacity,Image,TextInput,Linking} from 'react-native';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import * as Actions from '../actions/registration_action';
 import ImagePicker from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/MaterialIcons';
+import Plus from 'react-native-vector-icons/Entypo';
 import LinearGradient from 'react-native-linear-gradient';
 import {RadioGroup, RadioButton} from 'react-native-flexi-radio-button'
 
 
 
 
+
 const user = (<Icon name="user-o" size={20} color="gray" marginTop="50" />)
 const password = (<Icon1 name="lock-open" size={20} color="gray" marginTop="50" />)
+
 
  class Registration extends Component{
    constructor(props)
@@ -48,7 +51,6 @@ const password = (<Icon1 name="lock-open" size={20} color="gray" marginTop="50" 
       skipBackup: true
       }
     };
-
     ImagePicker.showImagePicker(options, (response) => {
       console.log('Response = ', response);
 
@@ -63,29 +65,45 @@ const password = (<Icon1 name="lock-open" size={20} color="gray" marginTop="50" 
       }
       else {
         let source = { uri: response.uri };
-
-        // You can also display the image using data:
-        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-        this.setState({
+          this.setState({
           avatarSource: source
         });
       }
     }); 
   }
+  validate(obj)
+  {
+    const { navigate } = this.props.navigation;
+    if(obj.email===""||obj.password===""||obj.fname===""||obj.lname===""||obj.gender==="")
+    {
+      alert("please enter all fields")
+    }
+    else{
+      navigate('Login') ;
+        this.props.registration(this.state);
+        this.clear()
 
-
+    }
+  }
+  
   render() {
     const { navigate } = this.props.navigation;
     return (
+    <ScrollView style={{flex:1,backgroundColor:"white"}}>
     <View style={styles.topView}>
       
         <Text style={[styles.heading,{flex:1}]}> REGISTRATION FORM</Text>
        <View style={styles.container}>
           
-          <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)} style={{flex:1}}>
-              <View style={[styles.avatarContainer,styles.shadow, {marginBottom: 20,justifyContent:"center"}]}>
-                { this.state.avatarSource === null ? <Text>select photo</Text> :
+          <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)} >
+              <View style={[styles.avatarContainer,styles.shadow]}>
+                { this.state.avatarSource === null ? 
+                <View>
+                <Text style={{top:15}}>select photo</Text>
+                <View style={{borderRadius:15, height:30, width:30,top:50,left:60,backgroundColor:"rgb(0,245,183)"}}>
+                <Plus name="plus" size={30} color="white" top={50} left={60} />
+                </View>
+                </View> :
                   <Image style={styles.avatar} source={this.state.avatarSource} />
                 }
               </View>
@@ -110,9 +128,12 @@ const password = (<Icon1 name="lock-open" size={20} color="gray" marginTop="50" 
               <TextInput
                 style={styles.text }
                 placeholder="************"placeholderTextColor="gray"
+                secureTextEntry={true}
                 onChangeText={(text) => this.setState({password:text})}
                 value={this.state.password}
+                autoCapitalize ="none"
             />
+           
             </View>
 
              <View style={styles.input}>
@@ -142,6 +163,7 @@ const password = (<Icon1 name="lock-open" size={20} color="gray" marginTop="50" 
             <RadioGroup
           style={{flexDirection:'row',justifyContent  : 'center'}}
             onSelect = {(value) => this.radio_props(value)}
+            selectedIndex={0}
             >
               <RadioButton value={'male'} 
               buttonSize={400}
@@ -159,9 +181,10 @@ const password = (<Icon1 name="lock-open" size={20} color="gray" marginTop="50" 
        </View>
             <LinearGradient colors={['#00c8b4', '#00f5b9']} style={[styles.btn,styles.shadow]}>
             <TouchableOpacity onPress={()=>{
-               //alert("==========" + this.state.email);
-                this.props.registration(this.state);
-                this.clear()
+                this.validate(this.state);
+                
+             
+               
                   }} >
                  <Text style={{color:"white",fontSize:15}}> Create Account</Text>
             </TouchableOpacity>
@@ -173,23 +196,25 @@ const password = (<Icon1 name="lock-open" size={20} color="gray" marginTop="50" 
             </View>
             
              </View>
-</View>
+             </View>
+</ScrollView>
     );
   }
-
+  
 }
 
 const styles = StyleSheet.create({
  container: {
-   flex:3,
+   //flex:3,
     alignItems: 'center',
-    marginTop:10
+    marginTop:10,
+    height:150,
+    width:150
   },
   avatarContainer: {
-    alignSelf:"stretch",
     flex:1,
     borderColor: '#9B9B9B',
-    borderWidth: 25 / PixelRatio.get(),
+    borderWidth: 12,
     justifyContent: 'center',
     alignItems: 'center',
     borderColor:"rgb(0,245,183)",
@@ -256,7 +281,15 @@ const styles = StyleSheet.create({
         height: 3
       },
       shadowRadius: 5,
-      shadowOpacity: 1.0
+      shadowOpacity: 1.0,
+      
+
+    },
+    plus:
+    {
+      top:45,
+      left:45,
+      
 
     }
   });

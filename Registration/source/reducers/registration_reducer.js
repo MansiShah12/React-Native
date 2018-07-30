@@ -19,8 +19,6 @@ export const registration= (state = dataState, action) => {
     
     return{
         ...state,
-       
-        data: state.data.concat(action.obj),
             
 }
    

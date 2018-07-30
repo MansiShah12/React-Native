@@ -4,7 +4,14 @@ import Login from './source/components/login';
 
 export const Navigator=createStackNavigator({
 
-    Registration:{screen:Registration, navigationOptions:{header:null}},
-    Login:{screen:Login, navigationOptions:{header:null}}
+    Registration:{
+        screen:Registration,
+        navigationOptions:{
+                header:null
+        }
+    },
+    Login:{
+        screen:Login,
+        navigationOptions:{header:null}}
 })
 
